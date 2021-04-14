@@ -1,1 +1,3 @@
-docsify serve /docs
+cd docs/
+docsify serve .
+puase
