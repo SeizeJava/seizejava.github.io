@@ -57,7 +57,7 @@ class BookOrder extends Book {
 }
 ```
 
-表明 BookOrder 是由 Book 派生 (extends) 的，BookOrder 是 Book 的子类，Book 是 BookOrder 的超类（父类）。因为不是一个类内，我们不可以直接给父类的`private` 的数据字段直接赋值（``public` 可以）。于是我们可以调用父类的构造器来于父类数据字段初始化：`super` 相当于调用父类的 `this` 构造器，（可以这样理解，但 `super` 并不是父类的引用，只是对编译器的指令）
+表明 BookOrder 是由 Book 派生 (extends) 的，BookOrder 是 Book 的子类，Book 是 BookOrder 的超类（父类）。因为不是一个类内，我们不可以直接给父类的`private` 的数据字段直接赋值（`public` 可以）。于是我们可以调用父类的构造器来于父类数据字段初始化：`super` 相当于调用父类的 `this` 构造器，（可以这样理解，但 `super` 并不是父类的引用，只是对编译器的指令）
 
 ## 覆盖
 
