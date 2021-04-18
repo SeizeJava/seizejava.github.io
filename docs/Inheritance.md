@@ -13,7 +13,7 @@
 利用组合的思想：
 
 ```java
-class BookOrder{
+public class BookOrder{
     private int orderId;
     private Book book;
     private double deliverCost;
@@ -43,7 +43,7 @@ out.println(bookOrder.getBook().getBook_name());
 如果利用继承，则使用关键字 `extends`：
 
 ```java
-class BookOrder extends Book {
+public class BookOrder extends Book {
     private int orderId;
     private double deliverCost;
     private LocalDateTime createdTime;
@@ -63,15 +63,29 @@ class BookOrder extends Book {
 
 因为不是一个类内，我们不可以直接给父类的`private` 的数据字段直接赋值（`public` 可以）。于是我们可以调用父类的构造器来于父类数据字段初始化：`super` 相当于调用父类的 `this` 构造器，（可以这样理解，但 `super` 并不是父类的引用，只是对编译器的指令）
 
-### super() 与 this() 的区别
+### super() 与 this() 的异同
 
-|        | this | super                |
-| ------ | ---- | -------------------- |
-| 构造器 |      |                      |
-|        |      |                      |
-| 本质   | 引用 | 编译器能识别的关键字 |
+|          | this                           | super                          |
+| -------- | ------------------------------ | ------------------------------ |
+| 构造器   | 在当前类调用本类其他其它构造器 | 在子类调用父类构造器           |
+| 作为引用 | 代表当前对象                   | 引用当前对象的直接父类中的成员 |
+| 本质     | 引用                           | 编译器能识别的 Java 关键字     |
 
+相同点：
 
+- `this()` 和 `super()`都指的是对象，所以均不可以在 static 环境中使用，如 static 变量，static 方法，static 语句块。  
+
+- `this()` 和 `super()`都需放在构造方法内第一行。
+
+### super() 与 this() 为什么必须在构造方法第一行
+
+构造方法的作用就是在 JVM 堆中构建出一个指定类型的对象，如果你调用了两个这种形式的方法，岂不是代表着构建出了两个对象。
+
+同理，为了避免构建出两个对象这种问题的出现，Java 在编译时对这种情况做了强校验， 用户不能再同一个方法内调用多次`this()` 或 `super()` ，同时为了避免对对象本身进行操作时，对象本身还未构建成功(也就找不到对应对象)，所以对`this()`或 `super()` 的调用只能在构造方法中的第一行实现，防止异常。
+
+在普通的成员方法中，如果调用 `super()` 或者 `this()`，你是想要重新创建一个对象吗？抱歉Java为了保证自身对象的合理性，不允许你做这样的操作。
+
+https://www.zhihu.com/question/47012546/answer/104002471
 
 ## 覆盖
 
@@ -132,7 +146,11 @@ Book 变量不仅可以**引用** BookOrder 对象，也可以引用其他 Book 
 
 ### 继承层次
 
+继承层次 (inheritance hierarchy) 是由同一个类派生出来的所有类的集合。在继承层次中，从某个特定的类到其祖先的路径被称为该类的继承链 (inheritance chain)，如图所示：
 
+![inherit1](https://gitee.com/xrandx/blog-figurebed/raw/master/img/20210418215125.jpg)
+
+Book 是所有其他类的父类。如果你想，可以这样的单继承模式可以一直延续。
 
 ### 调用方法
 
@@ -153,9 +171,63 @@ out.println(bookOrder.getUnit_price());
 
 ## 阻止继承
 
+有时候我们不希望其他类继承某类，这时我们可以声明 `final` 。
 
+```java
+public final class BookOrder extends Book{
+    //...
+}
+```
 
+如此，BookOrder 类不可以被用来扩展子类。
 
+也可以在方法上使用 `final` ，这就使得其子类方法无法覆盖这个方法。（将类声明为 final ，则其下的所有方法也是 final 的）
 
+```java
+public final LocalDateTime getCreatedTime() {
+    return createdTime;
+}
 
+public final void setCreatedTime(LocalDateTime createdTime) {
+    this.createdTime = createdTime;
+}
+```
+
+将 `getCreatedTime()` 和 `setCreatedTime()` 设置为 final ，不允许子类去改变 createdTime 的相关方法。
+
+## 强制类型转换
+
+有时候我们也许会需要像把 int 转 double 一样，来将我们自己的类强制转换到其他类。例如：
+
+```java
+Book[] books = new Book[]{
+    new BookOrder(2001, 10, "CS:APP",
+                  50, "Tech"),
+    new Book("Machine learning", 100, "ML"),
+    new Book("Thinking in Java", 100, "CS")
+};
+Book temp = (Book) books[0];
+```
+进行类型转换的唯一原因是：在暂时忽视对象的实际类型之后，使用对象属于父类的全部功能。例如，我们需要其属于 Book 类的 `getUnit_price` ，那么可以把一个 BookOrder 转成 Book 类。
+
+注意，我们**只能从继承链中，由下往上类型转换**。也就是子类只能转为父类，父类不能转为子类。理所应当，白马即马，马却未必是白马。
+
+若我们运行 `BookOrder temp = (BookOrder) books[1]`，则会出现 `java.lang.ClassCastException` 类型转换错误。
+
+只有父类对象本身就是用子类 new 出来的时候, 才可以在将来被强制转换为子类对象。例如：
+
+```java
+Book book1 = new BookOrder(2001, 10, "CS:APP", 50, "Tech");
+BookOrder bookOrder1 = (BookOrder)book1;
+```
+
+### instanceof
+
+`instanceof` 关键字可以帮助我们判断变量的类型。这样我们就可以避免将父类转成子类。
+
+```java
+if(book1 instanceof BookOrder){
+    out.println("yep!");
+}
+```
 

@@ -104,7 +104,7 @@ System.out.println(date.toString());
 - 构造器总是伴随着 `new` 操作一起调用
 
 ```java
-class Book {
+public class Book {
     private final String book_name;
     private double unit_price;
     public String book_type;
@@ -187,7 +187,7 @@ System.out.println(special_offer_book.getDiscountPrice(0.8));
 当我们想记录所有书的数量，我们可以用 `static` 关键字，每个由该类 (Book) 实例化的对象，都共享此对象 (book_num)。如果每次添加书时，数量加一，则可以方便地记录书的数量。
 
 ```java
-class Book {
+public class Book {
     private static int book_num = 0;
     //	共享内存
     private final String book_name;
@@ -207,7 +207,7 @@ class Book {
 进行如下操作
 
 ```java
-class Test{
+public class Test{
     public static void main(String[] args) {
         Book ml_book = new Book("Machine learning", 100, "ML");
         Book cs_book = new Book("CS: APP", 80, "CS");
@@ -224,7 +224,7 @@ class Test{
 静态变量使用得比较少，但静态常量却使用得比较多。一般设为 `public` 也不会影响封闭性，因为是 `final` 的。
 
 ```java
-class Decimal {
+public class Decimal {
     public static final double EPS = 1e-8;
 }
 ```
@@ -350,7 +350,7 @@ StringBuilder message2 = new StringBuilder("Yep");
 ### 显式初始化 
 
 ```java
-class Book {
+public class Book {
     private static int book_num = 0;
     private double unit_price = 50.0;
     public String book_type = "Tech";
@@ -414,7 +414,7 @@ System.out.println(ml_book.getUnit_price());
 还可以在  initialization block 中初始化：
 
 ```java
-class Book {
+public class Book {
     public static int book_num = 0;
 
     private int id;
