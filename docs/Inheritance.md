@@ -231,3 +231,56 @@ if(book1 instanceof BookOrder){
 }
 ```
 
+## 抽象类
+
+如果我们有一个 Album 类，Book 类和它相当于都有一个共同的父类 —— CulturalProduct 类。Album 类和 Book 类在继承层次中是同级的，如果我们想为他们实现一个 `getName()` 方法，但 Album 类和 Book 类对于 `getName()` 的具体实现不同。
+
+使用 `abstract` 关键字，我们就可以只关注抽象，不具体实现。
+
+```java
+public abstract class CulturalProduct {
+    public abstract String getName();
+}
+```
+
+于是 Book 类要继承这个方法，并且要提供一个实现。
+
+```java
+public class BookOrder extends Book {
+    //...
+    public String getName(){
+        return this.book_name;
+    }
+}
+```
+
+Album 类同样也是：
+
+```java
+public class Album extends CulturalProduct {
+    private String name;
+
+    public Album(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+}
+```
+
+有了这些描述，我们就可以实现多态了：
+
+```java
+Book book = new Book("this is book", 50, "Tech");
+Album album = new Album("this is album");
+CulturalProduct[] culturalProducts = new CulturalProduct[]{book, album};
+for(var i: culturalProducts){
+    out.println(i.getName());
+}
+//输出：
+//this is book
+//this is album
+```
+
